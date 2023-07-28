@@ -29,7 +29,7 @@ int infinite_while(void)
  * Return: Always 0.
  */
 int main(void)
-{:wq
+{
 	pid_t pid;
 	char count_number = 0;
 
