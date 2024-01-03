@@ -1,6 +1,7 @@
 #!/usr/bin/python3
-"""Export TODO list information for
-a given employee ID to CSV format."""
+"""Exports to-do list information for a
+given employee ID to CSV format."""
+
 import csv
 import requests
 import sys
@@ -10,31 +11,17 @@ if __name__ == "__main__":
 
     api_url = "https://jsonplaceholder.typicode.com/"
 
-    user_response = requests.get(api_url + "users/{}".format(employee_id))
-    user_data = user_response.json()
+    employee_data = requests.get(
+        api_url + "users/{}".format(employee_id)
+        ).json()
+    employee_username = employee_data.get("username")
 
-    if 'id' not in user_data:
-        print(f"User with ID {employee_id} not found.")
-        sys.exit(1)
-
-    username = user_data.get("username")
-
-    todos_response = requests.get(api_url + "todos",
-                                  params={"userId": employee_id})
-    todos_data = todos_response.json()
+    todos = requests.get(api_url + "todos",
+                         params={"userId": employee_id}).json()
 
     with open("{}.csv".format(employee_id), "w", newline="") as csvfile:
         csv_writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
-
-        csv_writer.writerow(["USER_ID", "USERNAME",
-                             "TASK_COMPLETED_STATUS", "TASK_TITLE"])
-
-        for task in todos_data:
-            csv_writer.writerow([
-                employee_id,
-                username,
-                str(task.get("completed")),
-                task.get("title")
-            ])
-
-    print(f"Data exported to {employee_id}.csv")
+        [csv_writer.writerow(
+            [employee_id, employee_username, to.get("completed"),
+             to.get("title")]
+         ) for to in todos]
