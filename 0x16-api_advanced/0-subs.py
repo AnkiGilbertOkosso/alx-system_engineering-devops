@@ -16,9 +16,5 @@ def number_of_subscribers(subreddit):
         allow_redirects=False)
     if response.status_code != 200:
         return 0
-    dic = response.json()
-    if 'data' not in dic:
-        return 0
-    if 'subscribers' not in dic.get('data'):
-        return 0
-    return response.json()['data']['subscribers']
+    api_data = response.json().get("data")
+    return api_data.get("subscribers")
